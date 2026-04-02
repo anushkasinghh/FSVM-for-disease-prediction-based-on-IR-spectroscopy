@@ -89,3 +89,38 @@ def create_combined_dataset(path, normVP, infoP):
     combined_df = pd.DataFrame(combined_records)
     return combined_df
 
+def save_corrected_Data():
+
+    path = ["../ALLDataGross/allKgData",
+        "../ALLDataGross/BlindData",
+        "../ALLDataGross/healthyCohort"
+    ]
+    normVP = [[504, 425, 451, 454, 450, 474, 451, 471, 540, 467,
+        550, 468, 481, 450, 515, 441, 452, 462, 453, 450, 452, 
+        490, 504, 520, 525, 498, 542, 527, 550],
+            [505, 503, 478, 453, 460, 494, 410, 413, 479, 489, 
+        473, 464, 445, 499, 406, 455, 481, 388, 428, 466, 463, 
+        520, 461],
+        [420, 420, 428, 448, 417, 430, 420, 449, 483, 499, 
+        438, 465, 438, 428, 503, 505, 504, 454, 515, 441, 
+        404, 363]]
+    infoP = [["H", "PC", "PC", "H", "PC", "BC", "PC", "PC", "BC", "BC", 
+        "PC", "PC", "PC", "PC", "H", "H","PC", "PC", "KC", "PC", "KC", 
+        "PC", "BC", "BC", "PC", "KC", "PC", "PC", "PC"],
+            ["H", "H" ,"H" ,"H", "KC", "KC", "PC", "PC" , "PC" ,"PC", 
+            "PC", "PC", 'BC', 'KC', 'PC' , 'PC' , 'PC', 'KC' , 'PC', 'BC', 'PC', 'KC', 'BC'],
+            ["F", "M", "M", "F", "F", "F", "F", "M", "M", "M", 
+        "M", "F", "M", "M", "F", "M" ,"M", "M", "M", "M", 
+        "M", "M" ]
+    ]
+    df = create_combined_dataset(path,normVP,infoP)
+
+    df['intensity_baseline_corrected'] = None
+    for idx, row in df.iterrows():
+        df.at[idx, "intensity_baseline_corrected"] = baseline_roy(x=row["wavenumber"], y=row["intensity"], norm_factor_i=row['normVP'])
+        print(f"{idx} done!")
+    print("baseline corrected!")
+
+    df.to_pickle('../data_processed/breath_data.pkl')    
+
+    return 0 
